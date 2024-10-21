@@ -79,3 +79,5 @@
 [1,"pandoc \n  to: html\n  output-file: index.html\n  standalone: true\n  title-prefix: Basic Data Analysis\n  section-divs: true\n  html-math-method: mathjax\n  wrap: none\n  default-image-extension: png\n  css:\n    - styles.css\n    - style.css\n  toc: true\n  \nmetadata\n  document-css: false\n  link-citations: true\n  date-format: long\n  lang: en\n  editor: visual\n  theme: cosmo\n  title: '<p style=\"color:black,text-align:center\">Basic Data Analysis</p>'\n  author:\n    - name: '<font color=#ff6600><b>Biometrics Unit</b></font>'\n      affiliation: '<font color=#ff6600><b>International Institute of Tropical Agriculture (IITA)</b></font>'\n  toc-location: right\n  toc_float: null\n  collapsed: true\n  smooth_scroll: true\n  code_folding: show\n  number_sections: false\n  highlight: monochrome\n  fig_width: 5\n  fig_height: 5\n  fig_caption: true\n  df_print: paged\n  'xaringan::moon_reader': null\n  lib_dir: libs\n  nature:\n    highlightStyle: github\n  \n"]
 [1,"Output created: docs\\index.html\n\nWatching files for changes\n"]
 [1,"GET: /\n  /style.css (404: Not Found)\n"]
+[1,"GET: /\n"]
+[1,"  /style.css (404: Not Found)\n"]
