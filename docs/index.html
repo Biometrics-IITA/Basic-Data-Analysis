@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title> Design of Experiment  – Basic Data Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Basic Data Analysis</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#summarizing-quantitative-data" id="toc-summarizing-quantitative-data" class="nav-link active" data-scroll-target="#summarizing-quantitative-data"><span style="color: #2C6D26;"><strong>Summarizing Quantitative Data</strong></span></a>
+  <ul class="collapse">
+  <li><a href="#central-tendency" id="toc-central-tendency" class="nav-link" data-scroll-target="#central-tendency"><span style="color: #002D62;">Central Tendency</span></a>
+  <ul class="collapse">
+  <li><a href="#mean" id="toc-mean" class="nav-link" data-scroll-target="#mean"><strong>Mean</strong></a></li>
+  <li><a href="#median" id="toc-median" class="nav-link" data-scroll-target="#median"><strong>Median</strong></a></li>
+  <li><a href="#mode" id="toc-mode" class="nav-link" data-scroll-target="#mode"><strong>Mode</strong></a></li>
+  </ul></li>
+  <li><a href="#measure-of-spread-variabilitydispersion" id="toc-measure-of-spread-variabilitydispersion" class="nav-link" data-scroll-target="#measure-of-spread-variabilitydispersion"><span style="color: #002D62;">Measure of Spread (Variability/Dispersion)</span></a></li>
+  </ul></li>
+  <li><a href="#summarizing-qualitative-data" id="toc-summarizing-qualitative-data" class="nav-link" data-scroll-target="#summarizing-qualitative-data"><span style="color: #2C6D26;"><strong>Summarizing Qualitative Data</strong></span></a>
+  <ul class="collapse">
+  <li><a href="#frequencies-counts" id="toc-frequencies-counts" class="nav-link" data-scroll-target="#frequencies-counts"><strong>Frequencies (counts)</strong></a></li>
+  <li><a href="#percentages-proportions" id="toc-percentages-proportions" class="nav-link" data-scroll-target="#percentages-proportions"><strong>Percentages (proportions)</strong></a></li>
+  </ul></li>
+  <li><a href="#data-summary-practical" id="toc-data-summary-practical" class="nav-link" data-scroll-target="#data-summary-practical"><span style="color: #2C6D26;"><strong>Data Summary: Practical</strong></span></a></li>
+  <li><a href="#correlation" id="toc-correlation" class="nav-link" data-scroll-target="#correlation"><span style="color: #2C6D26;"><strong>Correlation</strong></span></a>
+  <ul class="collapse">
+  <li><a href="#pearsons-correlation" id="toc-pearsons-correlation" class="nav-link" data-scroll-target="#pearsons-correlation"><span style="color: #002D62;">Pearson’s Correlation</span></a></li>
+  <li><a href="#spearmans-correlation" id="toc-spearmans-correlation" class="nav-link" data-scroll-target="#spearmans-correlation"><span style="color: #002D62;">Spearman’s Correlation</span></a></li>
+  <li><a href="#multiple-correlation" id="toc-multiple-correlation" class="nav-link" data-scroll-target="#multiple-correlation"><span style="color: #002D62;">Multiple Correlation</span></a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><p style="color:black,text-align:center"><br>
+Design of Experiment<br>
+</p></h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Author</div>
+  <div class="quarto-title-meta-heading">Affiliation</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author"><font color="#ff6600"><b>Biometrics Unit</b></font> </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            <font color="#ff6600"><b>International Institute of Tropical Agriculture (IITA)</b></font>
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="summarizing-quantitative-data" class="level1">
+<h1><span style="color: #2C6D26;"><strong>Summarizing Quantitative Data</strong></span></h1>
+<section id="central-tendency" class="level2">
+<h2 class="anchored" data-anchor-id="central-tendency"><span style="color: #002D62;">Central Tendency</span></h2>
+<p>Central tendency is an important statistical measure of quantitative data. It identifies a single value as representative of an entire distribution of the collected data. The <strong>Mean</strong>, <strong>Median</strong>, and <strong>Mode</strong> are three of the common ways to measure central tendency. Other measurements, such as a trimmed Mean, weighted Mean, geometric Mean, and harmonic Mean, are not covered in this course.</p>
+<section id="mean" class="level3">
+<h3 class="anchored" data-anchor-id="mean"><strong>Mean</strong></h3>
+<p>The most used measure of central tendency is the Mean. The average of the data is the Mean. It is computed by adding all the values in the data set divided by the number of observations in it. Extreme values can easily alter the Mean, which is one of the Mean’s shortcomings. i.e.&nbsp;sensitive to extreme values.</p>
+<p>To calculate the Mean, you first add all the numbers together (3 + 11 + 4 + 6 + 8 + 9 + 6 = 47). Then you divide the total sum by the number of scores used (47 / 7 = 6.7). In this example, the Mean or average of the number set is 6.7.</p>
+<p>Use the Mean to describe the sample with a single value that represents the center of the data. Many statistical analyses use the Mean as a standard measure of the center of the distribution of the data. The Median and the Mean both measure central tendency.</p>
+</section>
+<section id="median" class="level3">
+<h3 class="anchored" data-anchor-id="median"><strong>Median</strong></h3>
+<p>The Median is the value in the ordered data that is in the middle. The most critical step in calculating the Median is to arrange the data in ascending order from least to largest. Extreme values can not easily alter the Median. i.e.&nbsp;resistant to extreme values. When the dataset contains an even number of values, then the Median value of the dataset can be found by taking the Mean of the middle two values</p>
+</section>
+<section id="mode" class="level3">
+<h3 class="anchored" data-anchor-id="mode"><strong>Mode</strong></h3>
+<p>The Mode is the most often occurring value in the data. It’s crucial to keep in mind that the dataset could have multiple Modes. Extreme values can not easily alter the Mode. i.e.&nbsp;resistant to extreme values.</p>
+<p>Let’s import the needed data with this command to calculate the Mean, and Median.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Data Summary.xlsx"</span>, <span class="at">sheet=</span><span class="st">"Mean"</span>)   </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(dat<span class="sc">$</span>X)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 82.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(dat<span class="sc">$</span>X) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 81</code></pre>
+</div>
+</div>
+<p>Let’s see what happens to the Mean and Median if we mistakenly replace a number with an extreme value</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(dat<span class="sc">$</span>Y)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 153.1</code></pre>
+</div>
+</div>
+<p>The extreme value distorts the Mean.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(dat<span class="sc">$</span>Y) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 84</code></pre>
+</div>
+</div>
+<p>The Median is not really affected by the extreme value because of its characteristics of <code>resistant to extreme values</code>.</p>
+<p>Measures of central tendency are chosen based on the characteristics of the data.</p>
+<ul>
+<li><p>All three central tendency measurements hold true for continuous data with a symmetrical distribution. However, because the Mean takes into account every value in the dataset or distribution, the analyst typically employs it.</p></li>
+<li><p>The Median is the most accurate way to determine the central tendency in a skewed distribution.</p></li>
+<li><p>The best options for determining the central tendency, if you have the original data, are the Median and the Mode.</p></li>
+<li><p>The Mode is the most effective way to determine the central tendency when dealing with categorical data.</p></li>
+</ul>
+</section>
+</section>
+<section id="measure-of-spread-variabilitydispersion" class="level2">
+<h2 class="anchored" data-anchor-id="measure-of-spread-variabilitydispersion"><span style="color: #002D62;">Measure of Spread (Variability/Dispersion)</span></h2>
+<p>A summary statistic that indicates the amount of dispersion in a dataset is known as a measure of spread. Measures of spread describe how similar or varied the set of observed values is for a specific variable (data item). Summarising the dataset can help us understand the data, especially when the dataset is large.</p>
+<p><strong>Variance</strong>, <strong>standard deviation</strong>, and <strong>standard error</strong> are three of the commonly used measures of spread.</p>
+<p>Spread is in the context of the distribution of dataset points. A low value of spread indicates that the data points tend to be clustered tightly around the center while a high value of spread indicates the data points are far away from the center. To demonstrate the idea of spread, let’s consider these two different variables</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Data Summary.xlsx"</span>, <span class="at">sheet=</span><span class="st">"Spread"</span>) </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(dat1<span class="sc">$</span>spread01)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(dat1<span class="sc">$</span>spread01) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Data Summary.xlsx"</span>, <span class="at">sheet=</span><span class="st">"Spread"</span>)   </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(dat1<span class="sc">$</span>spread02)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(dat1<span class="sc">$</span>spread02)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 30</code></pre>
+</div>
+</div>
+<p>The two datasets have the same center, but how spread out are the values?. While a measure of central tendency describes the typical values, measures of spread define how far away the data points are from the center.</p>
+<p>Let’s examine the spread of the above variables</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(dat1<span class="sc">$</span>spread01)   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 200</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(dat1<span class="sc">$</span>spread02) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40</code></pre>
+</div>
+</div>
+<p>We can see the variability in how spread out the data points are from each other.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(dat1<span class="sc">$</span>spread01) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14.14214</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(dat1<span class="sc">$</span>spread02) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 6.324555</code></pre>
+</div>
+</div>
+<p>This also shows the difference in their standard deviations.</p>
+</section>
+</section>
+<section id="summarizing-qualitative-data" class="level1">
+<h1><span style="color: #2C6D26;"><strong>Summarizing Qualitative Data</strong></span></h1>
+<p>Once we have determined a variable to be qualitative (categorical), we need tools to summarize the data.</p>
+<ul>
+<li><p>The best way to summarize categorical data is to use frequencies (counts) and percentages (proportions).</p></li>
+<li><p>We can also summarize qualitative data by graphing the data using bar plots, histogram etc.</p></li>
+</ul>
+<section id="frequencies-counts" class="level2">
+<h2 class="anchored" data-anchor-id="frequencies-counts"><strong>Frequencies (counts)</strong></h2>
+<p>The quantity or the total number of an item in a collection or a group is simply referred to as frequency. The number of times an event or observation occurred during an experiment or research is known as its frequency in statistics. It can alternatively be understood as the simple count of an occurrence.</p>
+</section>
+<section id="percentages-proportions" class="level2">
+<h2 class="anchored" data-anchor-id="percentages-proportions"><strong>Percentages (proportions)</strong></h2>
+<p>A percentage is a fraction or part of the total that possesses a certain characteristic.</p>
+<p>Let’s consider an example:</p>
+<p>In a survey of 20 participants, a question was asked about their choice of a political party. Their responses are in a vector called <em>pol_party</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"Data Summary.xlsx"</span>, <span class="at">sheet=</span><span class="st">"Poll"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can easily summarize their responses within a few minutes, but it becomes difficult when the number of respondents is 100 and above.</p>
+<p>We can use the function <strong>table()</strong> and <strong>prop.table()</strong> to obtain the frequency and proportion.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Frequency  </span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(dat2<span class="sc">$</span>pol_party) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ APC NNPP  PDP  SDP 
+   8    4    5    3 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Proportion  </span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(<span class="fu">table</span>(dat2<span class="sc">$</span>pol_party)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ APC NNPP  PDP  SDP 
+0.40 0.20 0.25 0.15 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="data-summary-practical" class="level1">
+<h1><span style="color: #2C6D26;"><strong>Data Summary: Practical</strong></span></h1>
+<ul>
+<li><p>Import <strong>Example-02.csv</strong> into R and save in an object named <strong>example02</strong></p></li>
+<li><p>filter the object using the year <code>1970</code> and save it to a new object named <strong>example02.70</strong></p></li>
+<li><p>using the new object, summarize:</p></li>
+<li><p>the qualitative variables</p></li>
+<li><p>the first three quantitative variables</p></li>
+</ul>
+</section>
+<section id="correlation" class="level1">
+<h1><span style="color: #2C6D26;"><strong>Correlation</strong></span></h1>
+<p>Correlation is a bivariate analysis that measures the strength of association between two variables. In statistics, the value of the correlation coefficient varies between -1 to +1. When the value of the correlation coefficient lies around ± 1, then it is said to be a perfect degree of association between the two variables. As the correlation coefficient value goes towards 0, the relationship between the two variables is weak.</p>
+<p>A common statistic to show the strength of a relationship that exists between two continuous variables is called the Pearson correlation coefficient or just correlation coefficient. We may want to calculate the correlation coefficient between height and weight for example.</p>
+<p>Two common types of correlation tests will be discussed in this session:</p>
+<ul>
+<li><p>Pearson’s correlation</p></li>
+<li><p>Spearman’s correlation</p></li>
+</ul>
+<p>The function <strong>cor.test()</strong> in base R can be used to test for association/correlation.</p>
+<p>The arguments needed are:</p>
+<ul>
+<li>x, y: Numeric vectors of the same length</li>
+<li>method: Correlation method i.e.&nbsp;<em>(“pearson”, “spearman”)</em></li>
+</ul>
+<section id="pearsons-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="pearsons-correlation"><span style="color: #002D62;">Pearson’s Correlation</span></h2>
+<p>Pearson’s correlation is a parametric test widely used in statistics to measure the degree of the relationship between linear related variables and both variables should be normally distributed.</p>
+<p>For illustration, let’s consider the <code>australia.soybean</code> data, a multi-environment trial of 58 varieties of soybeans, in 4 locations across 2 years in Australia and examine the relationship/association between <code>yield</code> and <code>oil</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|message=FALSE</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Pearson correlation </span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"summary.australia.soybean.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 58 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (1): gen
+dbl (6): yield, height, lodging, size, protein, oil
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(dat3<span class="sc">$</span>yield, dat3<span class="sc">$</span>oil, <span class="at">method=</span> <span class="st">"pearson"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Pearson's product-moment correlation
+
+data:  dat3$yield and dat3$oil
+t = 8.82, df = 56, p-value = 3.528e-12
+alternative hypothesis: true correlation is not equal to 0
+95 percent confidence interval:
+ 0.6278966 0.8528460
+sample estimates:
+      cor 
+0.7625239 </code></pre>
+</div>
+</div>
+<p>This examines the relationship between yield and oil of the Australian soybean. The test statistic, t(8.82) indicates how many standard deviations away from zero the sample is, with p-vale (3.528e-12) indicating that there is a statistically significant correlation between the yield and oil of the Australian soybean.The sample estimates correlation coefficient (0.7625) which is very close to 1, indicates a strong positive linear relationship between the yield and oil of the soybean.</p>
+</section>
+<section id="spearmans-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="spearmans-correlation"><span style="color: #002D62;">Spearman’s Correlation</span></h2>
+<p>Spearman’s rank-order correlation coefficient is a rank-based version of Pearson’s correlation coefficient. It does not rely on any assumption about the distributions of the variables. It is a measure of rank correlation, i.e., the similarity of the orderings of the data when ranked by each of the quantities.</p>
+<p>Let’s examine the association between <code>Height</code> and <code>DaystoFlower</code>, assuming the data are not normally distributed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Spearman correlation  </span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl) </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>dat4 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"correlations.xlsx"</span>) </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cor.test</span>(dat4<span class="sc">$</span>Height, dat4<span class="sc">$</span>DaystoFlower, <span class="at">method=</span><span class="st">"spearman"</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in cor.test.default(dat4$Height, dat4$DaystoFlower, method =
+"spearman"): Cannot compute exact p-value with ties</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Spearman's rank correlation rho
+
+data:  dat4$Height and dat4$DaystoFlower
+S = 1169.8, p-value = 0.2938
+alternative hypothesis: true rho is not equal to 0
+sample estimates:
+      rho 
+0.2404159 </code></pre>
+</div>
+</div>
+<p>This examines the relationship between height and days to flowering of the plant. The test statistic S(1169.8), in the context of Spearman’s correlation, this value relates to the sum of the ranks associated with the differences between the ranks of the two variables. The p-value is reported as 0.2938 implying that there is no statistical significance between height and days to flowering of the plant. The sample estimates of the Spearman correlation coefficient <span class="math inline">\(p\)</span> (0.2404). This suggests a weak positive correlation between the variables, indicating that as one increases, the other tends to also increase, but the relationship is not strong.</p>
+</section>
+<section id="multiple-correlation" class="level2">
+<h2 class="anchored" data-anchor-id="multiple-correlation"><span style="color: #002D62;">Multiple Correlation</span></h2>
+<p>So far, we have seen how to correlate two quantitative variables together using the Pearson and Spearman rank method. It is also possible to correlate multiple quantitative variables together using either of the methods described above depending on the underlying assumption. We recommend the function <strong>rcorr()</strong> in the library <strong>Hmisc</strong> to examine the multiple association/correlation for all possible pairs of quantitative variables.</p>
+<p>The arguments needed are:</p>
+<ul>
+<li><p>x, y: Numeric matrix with at least five rows and atleast two columns</p></li>
+<li><p>type: Specify the correlation method i.e.&nbsp;<em>(“pearson”, “spearman”)</em></p></li>
+</ul>
+<p>The <code>rcorr</code> function returns three outputs, <code>r</code> the correlation matrix, <code>n</code> the matrix of number of observation used in each pair of variables, and <code>p</code> the p-values.</p>
+<p>To illustrate this concept, let’s consider the <code>australia.soybean</code> data in object named <code>dat3</code>, and examine the relationship/association for all the possible pairs of the following variables <code>yield</code>, <code>height</code>, <code>lodging</code>, <code>size</code>, <code>protein</code>, and <code>oil</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Pearson correlation  </span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Hmisc)  </span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>dat3 <span class="sc">|&gt;</span>  <span class="co">#the dataset  </span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span>   </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="co">#deselect the non-numeric variable in the first column   </span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">|&gt;</span> <span class="co">#convert the dataframe to matrix</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rcorr</span>(<span class="at">type =</span> <span class="st">"pearson"</span>) <span class="co">#perform the correlation using the pearson correlation method dat3 </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        yield height lodging  size protein   oil
+yield    1.00  -0.45   -0.61  0.66   -0.62  0.76
+height  -0.45   1.00    0.88 -0.86    0.53 -0.80
+lodging -0.61   0.88    1.00 -0.87    0.65 -0.87
+size     0.66  -0.86   -0.87  1.00   -0.55  0.91
+protein -0.62   0.53    0.65 -0.55    1.00 -0.78
+oil      0.76  -0.80   -0.87  0.91   -0.78  1.00
+
+n= 58 
+
+
+P
+        yield height lodging size  protein oil  
+yield         4e-04  0e+00   0e+00 0e+00   0e+00
+height  4e-04        0e+00   0e+00 0e+00   0e+00
+lodging 0e+00 0e+00          0e+00 0e+00   0e+00
+size    0e+00 0e+00  0e+00         0e+00   0e+00
+protein 0e+00 0e+00  0e+00   0e+00         0e+00
+oil     0e+00 0e+00  0e+00   0e+00 0e+00        </code></pre>
+</div>
+</div>
+<p>Let us assume the quantitative variables are not normally distributed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Spearman correlation  </span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Hmisc)  </span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>dat3 <span class="sc">|&gt;</span> <span class="co">#the dataset   </span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="co">#deselect the non-numeric variable in the first column   </span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>() <span class="sc">|&gt;</span> <span class="co">#convert the dataframe to matrix</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rcorr</span>(<span class="at">type =</span> <span class="st">"spearman"</span>) <span class="co">#perform the correlation using the spearman rank correlation method</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        yield height lodging  size protein   oil
+yield    1.00  -0.44   -0.65  0.71   -0.64  0.74
+height  -0.44   1.00    0.84 -0.74    0.63 -0.74
+lodging -0.65   0.84    1.00 -0.86    0.69 -0.86
+size     0.71  -0.74   -0.86  1.00   -0.68  0.94
+protein -0.64   0.63    0.69 -0.68    1.00 -0.80
+oil      0.74  -0.74   -0.86  0.94   -0.80  1.00
+
+n= 58 
+
+
+P
+        yield height lodging size  protein oil  
+yield         5e-04  0e+00   0e+00 0e+00   0e+00
+height  5e-04        0e+00   0e+00 0e+00   0e+00
+lodging 0e+00 0e+00          0e+00 0e+00   0e+00
+size    0e+00 0e+00  0e+00         0e+00   0e+00
+protein 0e+00 0e+00  0e+00   0e+00         0e+00
+oil     0e+00 0e+00  0e+00   0e+00 0e+00        </code></pre>
+</div>
+</div>
+<p>This shows the correlation matrix with yield, height, lodging, size, protein and oil as the variables. The numbers in the matrix reveal the following correlations:</p>
+<ul>
+<li>yield and height: -0.44 (Moderate negative correlation)</li>
+<li>yield and lodging: -0.65 (strong negative correlation)</li>
+<li>yield and size: 0.71 (strong positive correlation)</li>
+<li>yield and protein: -0.64 (strong negative correlation)</li>
+<li>yield and oil: 0.74 (strong positive correlation)</li>
+<li>height and lodging: 0.84 (strong positive correlation)</li>
+<li>size and oil: 0.94 (very strong positive correlation)</li>
+</ul>
+<p>Since all p-values reported are very low, this suggests that all correlations calculated in the matrix are statistically significant.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
