@@ -3,7 +3,7 @@
     "path": "~/Github/Basic Data Analysis/index.qmd",
     "project_path": "index.qmd",
     "type": "quarto_markdown",
-    "hash": "4159848564",
+    "hash": "2095754584",
     "contents": "",
     "dirty": false,
     "created": 1729495802550.0,
@@ -16,16 +16,16 @@
         "Source": "Source",
         "docOutlineVisible": "1",
         "rmdVisualCollapsedChunks": "",
-        "rmdVisualModeLocation": "138:100",
+        "rmdVisualModeLocation": "125:100",
         "cursorPosition": "0,0",
         "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1729500098,
+    "lastKnownWriteTime": 1729502911,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1729500098106,
+    "last_content_update": 1729502911858,
     "read_only": false,
     "read_only_alternatives": []
 }
